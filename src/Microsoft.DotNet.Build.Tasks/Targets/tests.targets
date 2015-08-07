@@ -21,6 +21,7 @@
 
   <PropertyGroup>
     <TestWithCore Condition="'$(TestWithCore)' == ''">true</TestWithCore>
+    <TestRuntimeIdentifier Condition="'$(TestRuntimeIdentifie)' == ''">win7-x64</TestRuntimeIdentifier>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TestWithCore)' == 'true'">
