@@ -1,6 +1,6 @@
 # set the base tools directory
 $toolsLocalPath = Join-Path $PSScriptRoot "Tools"
-$bootStrapperPath = Join-Path $toolsLocalPath "bootstrap.ps1"
+$bootStrapperPath = Join-Path $PSScriptRoot "bootstrap\bootstrap.ps1"
 
 # if the boot-strapper script doesn't exist then download it
 if ((Test-Path $bootStrapperPath) -eq 0)
@@ -15,7 +15,7 @@ if ((Test-Path $bootStrapperPath) -eq 0)
 }
 
 # now execute it
-& $bootStrapperPath (Get-Location) $toolsLocalPath -DotNetInstallBranch "rel/1.0.0-preview2.1" | Out-File (Join-Path (Get-Location) "bootstrap.log")
+& $bootStrapperPath (Get-Location) $toolsLocalPath -DotNetInstallBranch "rel/1.0.0" | Out-File (Join-Path (Get-Location) "bootstrap.log")
 if ($LastExitCode -ne 0)
 {
     Write-Output "Boot-strapping failed with exit code $LastExitCode, see bootstrap.log for more information."

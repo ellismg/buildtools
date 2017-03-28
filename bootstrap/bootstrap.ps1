@@ -78,18 +78,27 @@ if (-Not (Test-Path $SharedFrameworkSymlinkPath))
     cmd.exe /c mklink /j $SharedFrameworkSymlinkPath $junctionTarget | Out-Null
 }
 
-# create a project.json for the packages to restore
-$projectJson = Join-Path $ToolsLocalPath "project.json"
-$pjContent = "{ `"dependencies`": {"
-
+# create a csproj for the packages to restore
 $tools = Get-Content $rootToolVersions
-foreach ($tool in $tools)
-{
-    $name, $version = $tool.split("=")
-    $pjContent = $pjContent + "`"$name`": `"$version`","
-}
-$pjContent = $pjContent + "}, `"frameworks`": { `"netcoreapp1.0`": { } } }"
-$pjContent | Out-File $projectJson
+$csprojToRestore = Join-Path $ToolsLocalPath "bootstrap-restore.csproj"
+$csprojContent =
+@"
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+  </PropertyGroup>
+
+  <ItemGroup>$(foreach($tool in $tools) {
+$name,$version = $tool.split("=")
+"`r`n    <PackageReference Include=`"$name`" Version=`"$version`" />"
+})
+  </ItemGroup>
+</Project>
+"@
+
+$csprojContent | Out-File $csprojToRestore
 
 # now restore the packages
 $buildToolsSource = "https://dotnet.myget.org/F/dotnet-buildtools/api/v3/index.json"
@@ -100,7 +109,7 @@ if ($env:buildtools_source -ne $null)
 }
 $packagesPath = Join-Path $RepositoryRoot "packages"
 $dotNetExe = Join-Path $cliLocalPath "dotnet.exe"
-$restoreArgs = "restore $projectJson --packages $packagesPath --source $buildToolsSource --source $nugetOrgSource"
+$restoreArgs = "restore $csprojToRestore --packages $packagesPath --source $buildToolsSource --source $nugetOrgSource"
 $process = Start-Process -Wait -NoNewWindow -FilePath $dotNetExe -ArgumentList $restoreArgs -PassThru
 if ($process.ExitCode -ne 0)
 {
@@ -140,6 +149,8 @@ foreach ($tool in $tools)
 
     if (Test-Path (Join-Path $pkgVerPath "lib\init-tools.cmd"))
     {
+	Write-Host (Join-Path $pkgVerPath "lib\init-tools.cmd") $RepositoryRoot $dotNetExe $ToolsLocalPath
+
         cmd.exe /c (Join-Path $pkgVerPath "lib\init-tools.cmd") $RepositoryRoot $dotNetExe $ToolsLocalPath | Out-File (Join-Path $RepositoryRoot "Init-$name.log")
     }
 }
