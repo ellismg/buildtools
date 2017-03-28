@@ -2,10 +2,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <DefineConstants>$(DefineConstants);COREFX</DefineConstants>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFrameworks>netcoreapp1.0;net46</TargetFrameworks>
     <CommonPath>$(MSBuildThisFileDirectory)..\common</CommonPath>
-    <PackageTargetFallback>$(PackageTargetFallbacks);dnxcore50;portable-net45+win8</PackageTargetFallback>   
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp1.0'">
+    <DefineConstants>$(DefineConstants);COREFX</DefineConstants>
+    <PackageTargetFallback>$(PackageTargetFallbacks);dnxcore50;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
   <!-- Common command-line helper sources -->
   <ItemGroup>
@@ -26,5 +28,13 @@
     <PackageReference Include="System.Diagnostics.Contracts" Version="4.0.0" />
     <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.0.0" />
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.0'">
+    <None Remove="App.config" />
   </ItemGroup>
 </Project>
