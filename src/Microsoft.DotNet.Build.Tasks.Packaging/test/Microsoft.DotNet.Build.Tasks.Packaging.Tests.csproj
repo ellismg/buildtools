@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
-    <PackageTargetFallback>$(PackageTargetFallbacks);dnxcore50;portable-net45+win8</PackageTargetFallback>
+    <TargetFrameworks>netcoreapp1.0;net45</TargetFrameworks>
+    <PackageTargetFallback Condition="'$(TargetFramework)' == 'netcoreapp1.0'">$(PackageTargetFallbacks);dnxcore50;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\src\Microsoft.DotNet.Build.Tasks.Packaging.csproj" />
@@ -18,5 +18,12 @@
     <None Include="..\..\..\packages\Microsoft.NETCore.Platforms\1.1.0\runtime.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
   </ItemGroup>
 </Project>
