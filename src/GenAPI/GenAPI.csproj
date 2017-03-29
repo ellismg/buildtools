@@ -2,12 +2,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <DefineConstants>$(DefineConstants);COREFX</DefineConstants>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFrameworks>netcoreapp1.0;net46</TargetFrameworks>
     <CommonPath>$(MSBuildThisFileDirectory)..\common</CommonPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp1.0'">
+    <DefineConstants>$(DefineConstants);COREFX</DefineConstants>
     <PackageTargetFallback>$(PackageTargetFallbacks);dnxcore50;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
-
   <!-- Common command-line helper sources -->
   <ItemGroup>
     <Compile Include="$(CommonPath)\CommandLine.cs">
@@ -24,7 +25,18 @@
   <ItemGroup>   
     <ProjectReference Include="..\Microsoft.CCI.Extensions\Microsoft.CCI.Extensions.csproj" />
     <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc4-24217-00" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.0'">
     <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.0.0" />
     <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
+    <None Remove="App.config" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <None Update="Microsoft.DotNet.BuildTools.GenAPI.targets">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
