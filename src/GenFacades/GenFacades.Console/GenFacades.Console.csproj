@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Microsoft.CCI.Extensions\Microsoft.CCI.Extensions.csproj" />
+    <ProjectReference Include="..\..\Microsoft.Cci.Extensions\Microsoft.Cci.Extensions.csproj" />
     <ProjectReference Include="..\GenFacades.Core\GenFacades.Core.csproj" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp1.0'">
