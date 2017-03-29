@@ -1,27 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
     <OutputType>Exe</OutputType>
-    <RootNamespace>GenAPI</RootNamespace>
-    <AssemblyName>GenAPI</AssemblyName>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <DefineConstants>$(DefineConstants);COREFX</DefineConstants>
-    <NuGetRuntimeIdentifier>win7-x64</NuGetRuntimeIdentifier>
-    <NuGetTargetMoniker>.NETCoreApp,Version=v1.0</NuGetTargetMoniker>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <CommonPath>$(MSBuildThisFileDirectory)..\common</CommonPath>
+    <PackageTargetFallback>$(PackageTargetFallbacks);dnxcore50;portable-net45+win8</PackageTargetFallback>
   </PropertyGroup>
-
-  <!-- Default configurations to help VS understand the configurations -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' " />
-
-  <ItemGroup>
-    <Compile Include="Program.cs" />
-    <Compile Include="TypeListWriter.cs" />
-  </ItemGroup>
 
   <!-- Common command-line helper sources -->
   <ItemGroup>
@@ -36,13 +21,10 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="project.json" />
-  </ItemGroup>
-
-  <ItemGroup>
+  <ItemGroup>   
     <ProjectReference Include="..\Microsoft.CCI.Extensions\Microsoft.CCI.Extensions.csproj" />
+    <PackageReference Include="Microsoft.Cci" Version="4.0.0-rc4-24217-00" />
+    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.0.0" />
+    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.0.0" />
   </ItemGroup>
-
-  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" />
 </Project>
