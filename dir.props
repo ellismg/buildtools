@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" InitialTargets="CheckRoslyn" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Condition="Exists('..\dir.props')" Project="..\dir.props" />
 
   <!--
@@ -7,12 +7,6 @@
   -->
   <PropertyGroup>
     <OsEnvironment Condition="'$(OsEnvironment)'==''">$(OS)</OsEnvironment>
-  </PropertyGroup>
-
-  <!-- Build Tools Versions -->
-  <PropertyGroup>
-    <RoslynVersion>1.0.0-rc3-20150510-01</RoslynVersion>
-    <RoslynPackageName>Microsoft.Net.ToolsetCompilers</RoslynPackageName>
   </PropertyGroup>
 
   <!--
@@ -38,8 +32,8 @@
     <!-- Input Directories -->
     <PackagesDir Condition="'$(PackagesDir)'==''">$(ProjectDir)packages/</PackagesDir>
     <ToolsDir Condition="'$(ToolsDir)'==''">$(ProjectDir)Tools/</ToolsDir>
-    <BuildToolsTaskDir Condition="'$(BuildToolsTargets45)' == 'true'">$(ToolsDir)net45/</BuildToolsTaskDir>
-    <PackagingTaskDir>$(ToolsDir)net45/</PackagingTaskDir>
+    <BuildToolsTaskDir Condition="'$(BuildToolsTargets45)' == 'true'">$(ToolsDir)net46/</BuildToolsTaskDir>
+    <PackagingTaskDir>$(ToolsDir)net46/</PackagingTaskDir>
     <DotnetCliPath Condition="'$(DotnetCliPath)'==''">$(ToolsDir)dotnetcli/</DotnetCliPath>
   </PropertyGroup>
 
@@ -119,13 +113,6 @@
     <RestorePackages>false</RestorePackages>
   </PropertyGroup>
 
-  <!--
-    Set up Roslyn predefines
-  -->
-  <PropertyGroup>
-    <RoslynPackageDir>$(PackagesDir)/$(RoslynPackageName).$(RoslynVersion)/</RoslynPackageDir>
-    <RoslynPropsFile>$(RoslynPackageDir)build/Microsoft.Net.ToolsetCompilers.props</RoslynPropsFile>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(OsEnvironment)'=='Unix' and '$(UseRoslynCompiler)'=='true'">
     <!--
       PDB support isn't implemented yet. https://github.com/dotnet/roslyn/issues/2449
@@ -253,12 +240,7 @@
     <TargetsUnix Condition="'$(TargetsLinux)' == 'true' or '$(TargetsOSX)' == 'true' or '$(TargetsFreeBSD)' == 'true' or '$(TargetsNetBSD)' == 'true'">true</TargetsUnix>
   </PropertyGroup>
 
-  <Import Project="$(RoslynPropsFile)"
-          Condition="'$(UseRoslynCompiler)'=='true' and Exists('$(RoslynPropsFile)')" />
-
-  <!-- Building the build.proj should restore successfully, so ignore in that case -->
-  <Target Name="CheckRoslyn" Condition="'$(UseRoslynCompiler)'=='true' and '$(MSBuildProjectFile)'!='build.proj'">
-    <Warning Condition="!Exists('$(RoslynPropsFile)')"
-             Text="The Roslyn targets do not exist- Roslyn will not be used for this build, but the package should be restored if you build again." />
-  </Target>
+  <!-- Use Roslyn Compilers to build -->
+  <Import Project="$(RoslynPropsFile)" Condition="'$(RunningOnUnix)'!='true' and Exists('$(RoslynPropsFile)') and '$(UseRoslynCompilers)'!='false'" />
+  <Import Project="$(RoslynPropsFile)" Condition="'$(RunningOnUnix)'=='true' and Exists('$(RoslynPropsFile)')" />
 </Project>
